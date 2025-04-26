@@ -1,22 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="styles.css" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>PakePlus App</title>
-        <script type="module" src="/main.js" defer></script>
-    </head>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Detección de Tauri y Sistema Operativo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 50px;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="mensaje">Cargando...</h1>
 
-    <body>
-        <main class="container">
-            <h1>Welcome to PakePlus</h1>
+  <script type="module">
+    async function detectarEntorno() {
+      const mensaje = document.getElementById('mensaje');
 
-            <form class="row" id="greet-form">
-                <input id="greet-input" placeholder="Enter a name..." />
-                <button type="submit">Greet</button>
-            </form>
-            <p id="greet-msg"></p>
-        </main>
-    </body>
+      // ¿Estamos en Tauri?
+      const esTauri = !!window.__TAURI__;
+
+      if (esTauri) {
+        // Importamos dinámicamente el módulo os de Tauri
+        const { platform } = await window.__TAURI__.os;
+
+        const sistemaOperativo = await platform();
+        mensaje.textContent = `¡Hola! Estás usando Tauri en ${sistemaOperativo} 🚀`;
+      } else {
+        // Si no es Tauri, intentamos detectar el SO usando userAgent
+        const ua = navigator.userAgent;
+        let sistema = "desconocido";
+
+        if (ua.includes("Windows")) sistema = "Windows";
+        else if (ua.includes("Mac")) sistema = "MacOS";
+        else if (ua.includes("Linux")) sistema = "Linux";
+
+        mensaje.textContent = `No estás en Tauri. Parece que usas ${sistema}.`;
+      }
+    }
+
+    detectarEntorno();
+  </script>
+</body>
 </html>
